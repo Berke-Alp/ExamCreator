@@ -1,0 +1,132 @@
+﻿@using ExamCreator.Models;
+@using Newtonsoft.Json;
+
+@model Exam;
+
+@{
+    Layout = null;
+    List<Question> questions = JsonConvert.DeserializeObject<List<Question>>(Model.QnA);
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Creator - Admin Panel</title>
+
+    <link rel="stylesheet" href="~/vendor/toastr/toastr.min.css" />
+    <link rel="stylesheet" href="~/vendor/tailwindcss/tailwind.css" />
+</head>
+<body>
+
+    <main role="main" class="flex flex-col space-y-5 w-full px-5 mt-5">
+
+        <h1 class="text-3xl text-center font-semibold">@Model.Title</h1>
+
+        <p class="text-justify">@Model.Content</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+            @for (int i = 0; i < questions.Count; i++)
+            {
+                <div class="w-full p-5 h-auto mx-auto shadow-md">
+                    <p class="text-md font-bold mb-2">@(i+1) @questions[i].Query</p>
+                    <div id="answersQ@(i+1)" class="flex flex-col space-y-3">
+                        <div class="flex items-center">
+                            <span data-question="@(i+1)" class="w-full py-1 px-2 border border-gray-400 hover:border-gray-600">
+                                <label for="frmAnsQ@(i+1)A" class="cursor-pointer">A) @questions[i].A</label>
+                            </span>
+                            <input name="ansQ@(i+1)" id="frmAnsQ@(i+1)A" class="hidden" type="radio" value="1">
+                        </div>
+                        <div class="flex items-center">
+                            <span data-question="@(i+1)" class="w-full py-1 px-2 border border-gray-400 hover:border-gray-600">
+                                <label for="frmAnsQ@(i+1)B" class="cursor-pointer">B) @questions[i].B</label>
+                            </span>
+                            <input name="ansQ@(i+1)" id="frmAnsQ@(i+1)B" class="hidden" type="radio" value="2">
+                        </div>
+                        <div class="flex items-center">
+                            <span data-question="@(i+1)" class="w-full py-1 px-2 border border-gray-400 hover:border-gray-600">
+                                <label for="frmAnsQ@(i+1)C" class="cursor-pointer">C) @questions[i].C</label>
+                            </span>
+                            <input name="ansQ@(i+1)" id="frmAnsQ@(i+1)C" class="hidden" type="radio" value="3">
+                        </div>
+                        <div class="flex items-center">
+                            <span data-question="@(i+1)" class="w-full py-1 px-2 border border-gray-400 hover:border-gray-600">
+                                <label for="frmAnsQ@(i+1)D" class="cursor-pointer">D) @questions[i].D</label>
+                            </span>
+                            <input name="ansQ@(i+1)" id="frmAnsQ@(i+1)D" class="hidden" type="radio" value="4">
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <button id="frmSubmit" class="transition ease-in-out w-full md:w-1/2 lg:w-1/4 p-3 border-purple-700 bg-purple-600 hover:bg-purple-800 rounded shadow-md text-white mx-auto">SINAVI TAMAMLA</button>
+
+    </main>
+
+    <!-- JS Scripts -->
+    <script src="~/vendor/jquery/jquery-3.6.0.min.js"></script>
+    <script src="~/vendor/toastr/toastr.min.js"></script>
+
+    <script>
+        $(function () {
+            $("span").click(function (e) {
+                e.preventDefault()
+
+                let question = $(this).data("question")
+                let answer = $(this).parent().index() + 1
+
+                $('#answersQ' + question + ' div>span').toggleClass("bg-gray-300", false)
+                $('#answersQ' + question + ' div>input').attr("checked", false)
+                $('#answersQ' + question + ' div:nth-child(' + answer + ')>span').toggleClass("bg-gray-300", true)
+                $('#answersQ' + question + ' div:nth-child(' + answer + ')>input').attr("checked", true)
+            });
+
+            $("#frmSubmit").click(function (e) {
+                e.preventDefault();
+
+                let answers = [];
+                for (var i = 0; i < @questions.Count; i++) {
+                    let a = $('input[name="ansQ' + (i + 1) + '"]:checked').val();
+                    if (!a) {
+                        toastr["error"]("Tüm soruları cevaplamalısınız.");
+                        return;
+                    }
+                    answers.push(a);
+                }
+
+                $.ajax({
+                    url: "/Exam/Finish",
+                    method: "post",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8;",
+                    data: JSON.stringify({
+                        examId: @(Model.Id),
+                        answers: answers,
+                    }),
+                    success: function (e) {
+                        if (e.status == "ok") {
+
+                            for (var i = 0; i < @questions.Count; i++) {
+                                let opt = $('input[name="ansQ' + (i + 1) + '"]:checked').parent().children("span").first();
+                                opt.toggleClass("bg-gray-300", false);
+                                if (e.answers[i]) opt.toggleClass("bg-green-400", true)
+                                else opt.toggleClass("bg-red-400", true)
+                            }
+
+                            $("#frmSubmit").remove();
+                        }
+                        else {
+                            toastr["error"](e.message, "Hata")
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

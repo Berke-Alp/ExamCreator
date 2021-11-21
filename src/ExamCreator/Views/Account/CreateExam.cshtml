@@ -1,0 +1,226 @@
+﻿@using ExamCreator.Models;
+ 
+@{ 
+    Layout = null;
+
+    List<Post> posts = ViewBag.Posts as List<Post>;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Creator - Create</title>
+
+    <link rel="stylesheet" href="~/vendor/tailwindcss/tailwind.css" />
+    <link rel="stylesheet" href="~/vendor/toastr/toastr.min.css" />
+</head>
+<body>
+
+    <header class="w-full border-b border-gray-300">
+        <nav class="flex p-3 items-center justify-between">
+            <a class="text-xl font-bold" href="/">Exam Creator</a>
+            <ul class="flex space-x-5">
+                <li><a class="pb-1 transition ease-in-out border-b border-transparent hover:border-gray-200 text-gray-600 hover:text-gray-800" href="/Account">Sınavlar</a></li>
+                <li><a class="pb-1 transition ease-in-out border-b border-transparent hover:border-gray-200 text-gray-600 hover:text-gray-800" href="/Account/CreateExam">Sınav Oluştur</a></li>
+                <li><a class="pb-1 transition ease-in-out border-b border-transparent hover:border-red-200 text-red-600 hover:text-red-800" href="/Account/Logout">Çıkış</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main role="main" class="flex flex-col space-y-5 w-full px-5 mt-5">
+
+        <!-- Yazı seçme alanı -->
+        <div class="w-full lg:w-2/3 p-5 shadow border rounded-xl h-auto mx-auto">
+            <p class="text-lg font-bold mb-2">Yazı</p>
+            <select class="mb-2 w-full border transition ease-in-out border-gray-400 hover:border-gray-600 p-2 rounded shadow-md" name="post" id="frmPosts">
+                <option value="-1" disabled selected>Bir yazı seçiniz</option>
+                @foreach (Post post in posts)
+	            {
+                    <option value="@post.Id">@post.Title</option>
+	            }
+            </select>
+        </div>
+
+        <div id="afterLoadArea" class="hidden space-y-5">
+
+            <!-- Yazı içeriği -->
+            <div class="w-full lg:w-2/3 p-5 shadow border rounded-xl h-auto mx-auto">
+                <p class="text-lg font-bold mb-2">İçerik</p>
+                <p class="w-full text-justify" id="frmContent"></p>
+            </div>
+
+            <!-- Soru 1 -->
+            <div class="w-full lg:w-2/3 p-5 shadow border rounded-xl h-auto mx-auto">
+                <p class="text-lg font-bold mb-2">Soru 1</p>
+
+                <input name="question1" id="frmQ1" class="transition ease-in-out py-1 px-2 mb-2 flex-grow border border-gray-400 hover:border-gray-600 w-full rounded shadow-md" type="text" placeholder="Soru metni">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">A)</label>
+                        <input name="ansQ1A" id="frmAnsQ1A" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">B)</label>
+                        <input name="ansQ1B" id="frmAnsQ1B" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">C)</label>
+                        <input name="ansQ1C" id="frmAnsQ1C" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">D)</label>
+                        <input name="ansQ1D" id="frmAnsQ1D" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                </div>
+
+                <div class="flex w-full justify-center mt-2">
+                    <div class="flex items-center">
+                        <select class="mb-2 border transition ease-in-out border-gray-400 hover:border-gray-600 p-2 rounded shadow-md" name="rightAnswer1" id="frmRightAnswer1">
+                            <option value="0" selected disabled>Doğru cevap seç</option>
+                            <option value="1">A Şıkkı</option>
+                            <option value="2">B Şıkkı</option>
+                            <option value="3">C Şıkkı</option>
+                            <option value="4">D Şıkkı</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Soru 2 -->
+            <div class="w-full lg:w-2/3 p-5 shadow border rounded-xl h-auto mx-auto">
+                <p class="text-lg font-bold mb-2">Soru 2</p>
+
+                <input name="question2" id="frmQ2" class="transition ease-in-out py-1 px-2 mb-2 flex-grow border border-gray-400 hover:border-gray-600 w-full rounded shadow-md" type="text" placeholder="Soru metni">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">A)</label>
+                        <input name="ansQ2A" id="frmAnsQ2A" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">B)</label>
+                        <input name="ansQ2B" id="frmAnsQ2B" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">C)</label>
+                        <input name="ansQ2C" id="frmAnsQ2C" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">D)</label>
+                        <input name="ansQ2D" id="frmAnsQ2D" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                </div>
+
+                <div class="flex w-full justify-center mt-2">
+                    <div class="flex items-center">
+                        <select class="mb-2 border transition ease-in-out border-gray-400 hover:border-gray-600 p-2 rounded shadow-md" name="rightAnswer2" id="frmRightAnswer2">
+                            <option value="0" selected disabled>Doğru cevap seç</option>
+                            <option value="1">A Şıkkı</option>
+                            <option value="2">B Şıkkı</option>
+                            <option value="3">C Şıkkı</option>
+                            <option value="4">D Şıkkı</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Soru 3 -->
+            <div class="w-full lg:w-2/3 p-5 shadow border rounded-xl h-auto mx-auto">
+                <p class="text-lg font-bold mb-2">Soru 3</p>
+
+                <input name="question3" id="frmQ3" class="transition ease-in-out py-1 px-2 mb-2 flex-grow border border-gray-400 hover:border-gray-600 w-full rounded shadow-md" type="text" placeholder="Soru metni">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">A)</label>
+                        <input name="ansQ3A" id="frmAnsQ3A" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">B)</label>
+                        <input name="ansQ3B" id="frmAnsQ3B" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">C)</label>
+                        <input name="ansQ3C" id="frmAnsQ3C" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">D)</label>
+                        <input name="ansQ3D" id="frmAnsQ3D" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                </div>
+
+                <div class="flex w-full justify-center mt-2">
+                    <div class="flex items-center">
+                        <select class="mb-2 border transition ease-in-out border-gray-400 hover:border-gray-600 p-2 rounded shadow-md" name="rightAnswer3" id="frmRightAnswer3">
+                            <option value="0" selected disabled>Doğru cevap seç</option>
+                            <option value="1">A Şıkkı</option>
+                            <option value="2">B Şıkkı</option>
+                            <option value="3">C Şıkkı</option>
+                            <option value="4">D Şıkkı</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Soru 4 -->
+            <div class="w-full lg:w-2/3 p-5 shadow border rounded-xl h-auto mx-auto">
+                <p class="text-lg font-bold mb-2">Soru 4</p>
+
+                <input name="question4" id="frmQ4" class="transition ease-in-out py-1 px-2 mb-2 flex-grow border border-gray-400 hover:border-gray-600 w-full rounded shadow-md" type="text" placeholder="Soru metni">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">A)</label>
+                        <input name="ansQ4A" id="frmAnsQ4A" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">B)</label>
+                        <input name="ansQ4B" id="frmAnsQ4B" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">C)</label>
+                        <input name="ansQ4C" id="frmAnsQ4C" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex-shrink mr-2" for="">D)</label>
+                        <input name="ansQ4D" id="frmAnsQ4D" class="transition ease-in-out py-1 px-2 flex-grow border border-gray-400 hover:border-gray-600 rounded shadow-md" type="text" placeholder="Cevap içeriği">
+                    </div>
+                </div>
+
+                <div class="flex w-full justify-center mt-2">
+                    <div class="flex items-center">
+                        <select class="mb-2 border transition ease-in-out border-gray-400 hover:border-gray-600 p-2 rounded shadow-md" name="rightAnswer4" id="frmRightAnswer4">
+                            <option value="0" selected disabled>Doğru cevap seç</option>
+                            <option value="1">A Şıkkı</option>
+                            <option value="2">B Şıkkı</option>
+                            <option value="3">C Şıkkı</option>
+                            <option value="4">D Şıkkı</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="w-full flex justify-center justify-items-center content-center items-center">
+                <button id="frmSubmit" class="transition ease-in-out w-full md:w-1/2 lg:w-1/4 p-3 border-purple-700 bg-purple-600 hover:bg-purple-800 rounded shadow-md text-white mx-auto">Sınav Oluştur</button>
+            </div>
+            
+        </div>
+
+    </main>
+
+    <script src="~/vendor/jquery/jquery-3.6.0.min.js"></script>
+    <script src="~/vendor/toastr/toastr.min.js"></script>
+    <script src="~/js/create_exam.js"></script>
+</body>
+</html>

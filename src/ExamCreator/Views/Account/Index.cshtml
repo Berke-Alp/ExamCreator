@@ -1,0 +1,102 @@
+﻿@using ExamCreator.Models;
+
+@{
+    Layout = null;
+
+    List<Exam> exams = ViewBag.Exams as List<Exam>;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Creator - Admin Panel</title>
+
+    <link rel="stylesheet" href="~/vendor/toastr/toastr.min.css" />
+    <link rel="stylesheet" href="~/vendor/tailwindcss/tailwind.css" />
+</head>
+<body>
+
+    <header class="w-full border-b border-gray-300">
+        <nav class="flex p-3 items-center justify-between">
+            <a class="text-xl font-bold" href="/">Exam Creator</a>
+            <ul class="flex space-x-5">
+                <li><a class="pb-1 transition ease-in-out border-b border-transparent hover:border-gray-200 text-gray-600 hover:text-gray-800" href="/Account">Sınavlar</a></li>
+                <li><a class="pb-1 transition ease-in-out border-b border-transparent hover:border-gray-200 text-gray-600 hover:text-gray-800" href="/Account/CreateExam">Sınav Oluştur</a></li>
+                <li><a class="pb-1 transition ease-in-out border-b border-transparent hover:border-red-200 text-red-600 hover:text-red-800" href="/Account/Logout">Çıkış</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main role="main" class="flex flex-col space-y-5 w-full px-5 mt-5">
+        <div class="w-full p-5 shadow h-auto mx-auto">
+
+            @if (exams.Count > 0)
+            {
+                <table class="w-full">
+                    <thead class="border-b">
+                        <tr>
+                            <th class="text-left">#</th>
+                            <th class="text-left">Başlık</th>
+                            <th class="text-left">Tarih</th>
+                            <th class="text-left"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Exam exam in exams)
+                        {
+                            <tr class="align-middle items-center">
+                                <td>@exam.Id</td>
+                                <td>@exam.Title</td>
+                                <td>@exam.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td><a href="javascript:void(0)" data-exam-id="@exam.Id" class="transition ease-in-out text-red-500 hover:text-red-700 border-b hover:border-red-700 border-transparent">Sil</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Henüz sınav oluşturulmamış. <a class="transition ease-in-out text-purple-800 border-b border-transparent hover:border-purple-800" href="~/Account/CreateExam">Buraya</a> tıklayarak sınav oluşturma ekranına gidebilirsiniz.</p>
+            }
+
+
+        </div>
+
+    </main>
+
+    <!-- JS Scripts -->
+    <script src="~/vendor/jquery/jquery-3.6.0.min.js"></script>
+    <script src="~/vendor/toastr/toastr.min.js"></script>
+
+    <script>
+        $(function () {
+            $("a[data-exam-id]").click(function (e) {
+                e.preventDefault();
+
+                if (confirm("Bu sınavı silmek istediğinize emin misiniz?")) {
+                    let examId = $(this).data("exam-id");
+                    let row = $(this).parent().parent();
+
+                    $.ajax({
+                        url: "/Exam/Delete",
+                        method: "delete",
+                        dataType: "json",
+                        data: {
+                            examId: examId,
+                        },
+                        success: function (e) {
+                            if (e.status == "ok") {
+                                row.remove();
+                                toastr["success"]("Sınav başarıyla silindi.", "Başarılı");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Creator - Login</title>
+
+    <link rel="stylesheet" href="~/vendor/tailwindcss/tailwind.css" />
+</head>
+<body class="w-screen h-screen max-h-screen min-h-screen justify-center flex">
+
+    <main role="main" class="flex place-self-center">
+        <div class="py-10 px-10 shadow border rounded-xl h-auto">
+            <h1 class="text-center text-2xl font-bold mb-6 mx-20">KULLANICI GİRİŞ</h1>
+
+            <p id="errorMessage" class="transition ease-in-out text-red-400 mb-2 hidden opacity-0"></p>
+
+            <form id="loginForm" class="w-full" method="post" action="~/Account/Login">
+                <input id="inpUsername" name="username" class="mb-2 w-full transition ease-in-out block py-1 px-2 border border-gray-400 hover:border-gray-600 hover:shadow-md rounded" type="text" placeholder="Kullanıcı Adı" required>
+                <input id="inpPassword" name="password" class="mb-2 w-full transition ease-in-out block py-1 px-2 border border-gray-400 hover:border-gray-600 hover:shadow-md rounded" type="password" placeholder="Şifre" required>
+                <div class="w-full flex justify-end">
+                    <input id="submitButton" class="transition ease-in-out py-1 px-3 border border-purple-700 bg-purple-600 hover:bg-purple-800 text-white rounded cursor-pointer" type="submit" value="Giriş Yap">
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="~/vendor/jquery/jquery-3.6.0.min.js"></script>
+    <script>
+        function showErrorMessage(msg) {
+            let errmsg = $("#errorMessage");
+            errmsg.toggleClass("hidden", false);
+            errmsg.toggleClass("opacity-0", false);
+            errmsg.toggleClass("text-red-400", true);
+            errmsg.toggleClass("text-green-400", false);
+            errmsg.text(msg);
+        }
+
+        function showSuccessMessage(msg) {
+            let errmsg = $("#errorMessage");
+            errmsg.toggleClass("hidden", false);
+            errmsg.toggleClass("opacity-0", false);
+            errmsg.toggleClass("text-red-400", false);
+            errmsg.toggleClass("text-green-400", true);
+            errmsg.text(msg);
+        }
+
+        $("#loginForm").submit(function (e) {
+            e.preventDefault();
+
+            let username = $("#inpUsername").val().trim();
+            let password = $("#inpPassword").val().trim();
+
+            if (username.length < 1 || password.length < 1) {
+                showErrorMessage("Kullanıcı adı veya şifre boş olamaz.");
+                return;
+            }
+
+            let submitBtn = $("#submitButton");
+            submitBtn.attr("disabled", true);
+
+            $.ajax({
+                url: "/Account/Login",
+                method: "post",
+                accepts: "application/json",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Username: username,
+                    Password: password
+                }),
+                success: function (e) {
+                    if (e.status == "ok") {
+                        showSuccessMessage(e.message);
+                        setTimeout(function () {
+                            window.location.href = "/Account"
+                        }, 1000)
+                    }
+                    else {
+                        showErrorMessage(e.message);
+                        submitBtn.attr("disabled", false);
+                    }
+                }
+            })
+        });
+    </script>
+
+</body>
+</html>
